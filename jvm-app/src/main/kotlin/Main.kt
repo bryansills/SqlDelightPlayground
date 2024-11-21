@@ -10,7 +10,40 @@ fun main() {
     mainScope.launchBlocking {
         val database = createDatabase(DriverFactory())
         val queries = database.songQueries
-        queries.insert_song("fake external id", "fake name")
+
+        val numberOfSongs = 1000
+        val numberOfPlaylists = 250
+        val songsPerPlaylist = (10..25)
+
+        database.transaction {
+            repeat(numberOfSongs) { songIndex ->
+                queries.insert_song(
+                    externalId = (1000 + songIndex).toString(),
+                    name = "song #$songIndex"
+                )
+            }
+
+            repeat(numberOfPlaylists) { playlistIndex ->
+                val playlistExternalId = (5000 + playlistIndex).toString()
+                queries.insert_playlist(
+                    externalId = playlistExternalId,
+                    name = "playlist #$playlistIndex"
+                )
+
+                val songsForThisPlaylist = (0 until numberOfSongs)
+                    .shuffled()
+                    .take(songsPerPlaylist.random())
+
+                songsForThisPlaylist.forEach { rawSongIndex ->
+                    val songExternalId = (1000 + rawSongIndex).toString()
+                    queries.insert_playlist_song(
+                        songExternalId = songExternalId,
+                        playlistExternalId = playlistExternalId
+                    )
+                }
+            }
+        }
+
         val results = queries.get_all_songs().awaitAsList()
         println(results.toString())
     }
