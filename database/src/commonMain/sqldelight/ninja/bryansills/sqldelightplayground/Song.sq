@@ -1,7 +1,16 @@
 insert_song:
-INSERT INTO song(id, external_id, name)
+INSERT INTO song(id, external_id, name, external_album_id)
 VALUES (
     (SELECT id FROM song WHERE external_id = :externalId),
+    :externalId,
+    :name,
+    :albumExternalId
+);
+
+insert_album:
+INSERT INTO album(id, external_id, name)
+VALUES (
+    (SELECT id FROM album WHERE external_id = :externalId),
     :externalId,
     :name
 );
@@ -24,3 +33,8 @@ VALUES (
 
 get_all_songs:
 SELECT * FROM song;
+
+get_all_songs_with_album_name:
+SELECT song.name, album.name AS albumName
+FROM song
+INNER JOIN album WHERE album.external_id = song.external_album_id;

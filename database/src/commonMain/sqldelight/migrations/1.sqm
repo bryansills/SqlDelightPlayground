@@ -1,7 +1,8 @@
 CREATE TABLE song (
     id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     external_id TEXT NOT NULL,
-    name TEXT NOT NULL
+    name TEXT NOT NULL,
+    external_album_id TEXT NOT NULL
 );
 
 CREATE TABLE playlist (
@@ -16,3 +17,8 @@ CREATE TABLE playlist_song (
     playlist_external_id TEXT NOT NULL
 );
 
+CREATE TABLE album (
+    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    external_id TEXT NOT NULL,
+    name TEXT NOT NULL
+);

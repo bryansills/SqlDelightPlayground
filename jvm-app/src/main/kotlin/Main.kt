@@ -1,6 +1,7 @@
 import kotlinx.coroutines.*
 import app.cash.sqldelight.async.coroutines.awaitAsList
 import ninja.bryansills.sqldelightplayground.DriverFactory
+import ninja.bryansills.sqldelightplayground.Get_all_songs_with_album_name
 import ninja.bryansills.sqldelightplayground.createDatabase
 import kotlin.system.exitProcess
 
@@ -17,9 +18,16 @@ fun main() {
 
         database.transaction {
             repeat(numberOfSongs) { songIndex ->
+                val albumExternalId = (3000 + songIndex).toString()
                 queries.insert_song(
                     externalId = (1000 + songIndex).toString(),
-                    name = "song #$songIndex"
+                    name = "song #$songIndex",
+                    albumExternalId = albumExternalId
+                )
+
+                queries.insert_album(
+                    externalId = albumExternalId,
+                    name = "album #$songIndex, but cool"
                 )
             }
 
@@ -44,7 +52,7 @@ fun main() {
             }
         }
 
-        val results = queries.get_all_songs().awaitAsList()
+        val results: List<Get_all_songs_with_album_name> = queries.get_all_songs_with_album_name().awaitAsList()
         println(results.toString())
     }
 }
