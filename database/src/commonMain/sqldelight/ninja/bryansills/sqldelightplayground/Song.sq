@@ -37,4 +37,11 @@ SELECT * FROM song;
 get_all_songs_with_album_name:
 SELECT song.name, album.name AS albumName
 FROM song
-INNER JOIN album WHERE album.external_id = song.external_album_id;
+INNER JOIN album ON album.external_id = song.external_album_id;
+
+get_all_playlists_with_songs:
+SELECT playlist.name AS playlistName, song.name AS songName
+FROM playlist
+INNER JOIN playlist_song ON playlist.external_id = playlist_song.playlist_external_id
+INNER JOIN song ON playlist_song.song_external_id = song.external_id
+LIMIT 100;

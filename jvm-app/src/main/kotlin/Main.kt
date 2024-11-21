@@ -1,7 +1,7 @@
 import kotlinx.coroutines.*
 import app.cash.sqldelight.async.coroutines.awaitAsList
 import ninja.bryansills.sqldelightplayground.DriverFactory
-import ninja.bryansills.sqldelightplayground.Get_all_songs_with_album_name
+import ninja.bryansills.sqldelightplayground.Get_all_playlists_with_songs
 import ninja.bryansills.sqldelightplayground.createDatabase
 import kotlin.system.exitProcess
 
@@ -52,8 +52,11 @@ fun main() {
             }
         }
 
-        val results: List<Get_all_songs_with_album_name> = queries.get_all_songs_with_album_name().awaitAsList()
-        println(results.toString())
+        val results: List<Get_all_playlists_with_songs> = queries.get_all_playlists_with_songs().awaitAsList()
+        val groupedPlaylists = results.groupBy { it.playlistName }
+        groupedPlaylists.entries.forEach { entry ->
+            println("playlist: ${entry.key} has ${entry.value.size} songs")
+        }
     }
 }
 
