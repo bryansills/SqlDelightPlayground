@@ -18,3 +18,4 @@ enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 rootProject.name = "SqlDelightPlayground"
 
 include(":jvm-app")
+include(":database")
