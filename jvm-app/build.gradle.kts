@@ -12,3 +12,8 @@ java {
 application {
     mainClass = "MainKt"
 }
+
+dependencies {
+    implementation(projects.database)
+    implementation(libs.coroutines)
+}

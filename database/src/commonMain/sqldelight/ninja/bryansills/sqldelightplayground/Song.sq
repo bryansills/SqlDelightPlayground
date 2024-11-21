@@ -1,0 +1,26 @@
+insert_song:
+INSERT INTO song(id, external_id, name)
+VALUES (
+    (SELECT id FROM song WHERE external_id = :externalId),
+    :externalId,
+    :name
+);
+
+insert_playlist:
+INSERT INTO playlist(id, external_id, name)
+VALUES (
+    (SELECT id FROM playlist WHERE external_id = :externalId),
+    :externalId,
+    :name
+);
+
+insert_playlist_song:
+INSERT INTO playlist_song(id, song_external_id, playlist_external_id)
+VALUES (
+    (SELECT id FROM playlist_song WHERE song_external_id = :songExternalId AND playlist_external_id = :playlistExternalId),
+    :songExternalId,
+    :playlistExternalId
+);
+
+get_all_songs:
+SELECT * FROM song;
