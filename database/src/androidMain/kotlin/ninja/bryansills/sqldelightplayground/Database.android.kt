@@ -1,4 +1,4 @@
-package ninja.bryansills.sqldelightplayground.database
+package ninja.bryansills.sqldelightplayground
 
 import android.content.Context
 import app.cash.sqldelight.async.coroutines.synchronous
