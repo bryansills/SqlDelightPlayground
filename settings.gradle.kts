@@ -19,3 +19,4 @@ rootProject.name = "SqlDelightPlayground"
 
 include(":jvm-app")
 include(":database")
+include(":demo-app")
