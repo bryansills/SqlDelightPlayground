@@ -2,6 +2,9 @@ package ninja.bryansills.sqldelightplayground
 
 import app.cash.sqldelight.async.coroutines.awaitAsList
 import app.cash.sqldelight.db.SqlDriver
+import kotlinx.datetime.Clock
+import kotlinx.datetime.Instant
+import kotlin.time.Duration.Companion.minutes
 
 expect class DriverFactory {
     fun createDriver(): SqlDriver
@@ -15,7 +18,8 @@ fun createDatabase(driverFactory: DriverFactory): Database {
 suspend fun Database.preloadDatabase(
     numberOfSongs: Int = 1000,
     numberOfPlaylists: Int = 250,
-    songsPerPlaylist: IntRange = (10..25)
+    songsPerPlaylist: IntRange = (10..25),
+    currentTime: Instant = Clock.System.now()
 ) {
     val queries = this.songQueries
 
@@ -30,7 +34,8 @@ suspend fun Database.preloadDatabase(
             queries.insert_song(
                 externalId = (1000 + songIndex).toString(),
                 name = "song #$songIndex",
-                albumExternalId = albumExternalId
+                albumExternalId = albumExternalId,
+                playedAt = (currentTime - songIndex.minutes).toString()
             )
 
             queries.insert_album(

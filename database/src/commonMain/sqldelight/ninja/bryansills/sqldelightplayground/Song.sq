@@ -1,10 +1,11 @@
 insert_song:
-INSERT INTO song(id, external_id, name, external_album_id)
+INSERT INTO song(id, external_id, name, external_album_id, played_at)
 VALUES (
     (SELECT id FROM song WHERE external_id = :externalId),
     :externalId,
     :name,
-    :albumExternalId
+    :albumExternalId,
+    :playedAt
 );
 
 insert_album:
@@ -32,7 +33,7 @@ VALUES (
 );
 
 get_all_songs:
-SELECT * FROM song;
+SELECT * FROM song ORDER BY played_at DESC;
 
 get_all_songs_with_album_name:
 SELECT song.name, album.name AS albumName

@@ -16,4 +16,5 @@ application {
 dependencies {
     implementation(projects.database)
     implementation(libs.coroutines)
+    implementation(libs.kotlinx.datetime)
 }
