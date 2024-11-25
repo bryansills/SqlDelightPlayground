@@ -46,6 +46,10 @@ dependencies {
     implementation(libs.coroutines)
     implementation(libs.kotlinx.datetime)
     implementation(libs.sqldelight.coroutines)
+    implementation(libs.sqldelight.paging)
+    implementation(libs.paging.runtime)
+    implementation(libs.paging.compose)
+
     implementation(libs.core.ktx)
     implementation(libs.lifecycle.runtime.ktx)
     implementation(libs.activity.compose)

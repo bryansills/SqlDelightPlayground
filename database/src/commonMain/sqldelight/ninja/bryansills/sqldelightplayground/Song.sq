@@ -35,6 +35,15 @@ VALUES (
 get_all_songs:
 SELECT * FROM song ORDER BY played_at DESC;
 
+count_songs:
+SELECT count(*) FROM song;
+
+get_paged_songs:
+SELECT *
+FROM song
+ORDER BY played_at DESC
+LIMIT :limit OFFSET :offset;
+
 get_all_songs_with_album_name:
 SELECT song.name, album.name AS albumName
 FROM song
