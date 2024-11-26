@@ -20,6 +20,7 @@ kotlin {
         commonMain.dependencies {
             implementation(libs.coroutines)
             implementation(libs.kotlinx.datetime)
+            implementation(libs.paging.common)
         }
         androidMain.dependencies {
             implementation(libs.sqldelight.android.driver)

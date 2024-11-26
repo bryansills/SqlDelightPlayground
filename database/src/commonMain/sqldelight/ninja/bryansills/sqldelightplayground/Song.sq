@@ -72,6 +72,15 @@ INNER JOIN album ON album.external_id = song.external_album_id
 WHERE played_at >= :beginInclusive AND (played_at < :endExclusive OR :endExclusive IS NULL)
 ORDER BY played_at DESC;
 
+get_keyed_paged_songs_with_album_name_with_playlists:
+SELECT song.id, song.name, song.played_at, album.name AS albumName, playlist.name AS playlistName
+FROM song
+INNER JOIN album ON album.external_id = song.external_album_id
+INNER JOIN playlist_song ON song.external_id = playlist_song.song_external_id
+INNER JOIN playlist ON playlist.external_id = playlist_song.playlist_external_id
+WHERE played_at >= :beginInclusive AND (played_at < :endExclusive OR :endExclusive IS NULL)
+ORDER BY played_at DESC;
+
 get_all_songs_with_album_name:
 SELECT song.name, album.name AS albumName
 FROM song

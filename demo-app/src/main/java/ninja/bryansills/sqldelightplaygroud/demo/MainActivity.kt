@@ -13,26 +13,24 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.compose.collectAsLazyPagingItems
-import app.cash.sqldelight.paging3.QueryPagingSource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import ninja.bryansills.sqldelightplaygroud.demo.ui.theme.SqlDelightPlaygroundTheme
 import ninja.bryansills.sqldelightplayground.Database
 import ninja.bryansills.sqldelightplayground.DriverFactory
+import ninja.bryansills.sqldelightplayground.TransformableKeyedQueryPagingSource
 import ninja.bryansills.sqldelightplayground.createDatabase
 import ninja.bryansills.sqldelightplayground.preloadDatabase
 
@@ -55,22 +53,40 @@ class MainActivity : ComponentActivity() {
             SqlDelightPlaygroundTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     if (hasLoadedDatabase) {
-                        val pagingSource = remember {
-                            QueryPagingSource(
+                        val transformedPagingSource = remember {
+                            TransformableKeyedQueryPagingSource(
                                 transacter = database.songQueries,
                                 context = Dispatchers.IO,
                                 pageBoundariesProvider = { anchor: String?, limit: Long ->
                                     database.songQueries.keyed_page_boundaries_songs(limit, anchor)
                                 },
                                 queryProvider = { beginInclusive: String, endExclusive: String? ->
-                                    database.songQueries.get_keyed_paged_songs_with_album_name(beginInclusive, endExclusive)
+                                    database.songQueries.get_keyed_paged_songs_with_album_name_with_playlists(beginInclusive, endExclusive)
                                 },
+                                transform = { databaseRows ->
+                                    databaseRows
+                                        .groupBy { it.id }
+                                        .values
+                                        .mapNotNull { rowsForOneSong ->
+                                            if (rowsForOneSong.isNotEmpty()) {
+                                                val oneRow = rowsForOneSong.first()
+                                                SongWithPlaylistsItIsOn(
+                                                    name = oneRow.name,
+                                                    albumName = oneRow.albumName,
+                                                    playedAt = oneRow.played_at,
+                                                    playlistsItIsOn = rowsForOneSong.map { it.playlistName }
+                                                )
+                                            } else {
+                                                null
+                                            }
+                                        }
+                                }
                             )
                         }
                         val pager = remember {
                             Pager(
                                 config = PagingConfig(pageSize = 25)
-                            ) { pagingSource }
+                            ) { transformedPagingSource }
                         }
                         val lazyPagingItems = pager.flow.collectAsLazyPagingItems()
 
@@ -92,7 +108,8 @@ class MainActivity : ComponentActivity() {
                                 Column(modifier = Modifier.padding(4.dp)) {
                                     Text(text = "Title: ${song.name}")
                                     Text(text = "Album Title: ${song.albumName}")
-                                    Text(text = "Played at: ${song.played_at}")
+                                    Text(text = "Played at: ${song.playedAt}")
+                                    Text(text = "On playlists: ${song.playlistsItIsOn.joinToString()}")
                                 }
                             }
 
@@ -117,18 +134,9 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    SqlDelightPlaygroundTheme {
-        Greeting("Android")
-    }
-}
+data class SongWithPlaylistsItIsOn(
+    val name: String,
+    val albumName: String,
+    val playedAt: String,
+    val playlistsItIsOn: List<String>
+)

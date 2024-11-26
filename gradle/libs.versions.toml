@@ -24,6 +24,7 @@ sqldelight-jvm-driver = { group = "app.cash.sqldelight", name = "sqlite-driver",
 sqldelight-sqlite-dialect = { group = "app.cash.sqldelight", name = "sqlite-3-38-dialect", version.ref = "sqldelight"}
 sqldelight-coroutines = { module = "app.cash.sqldelight:coroutines-extensions", version.ref = "sqldelight" }
 sqldelight-paging = { module = "app.cash.sqldelight:androidx-paging3-extensions", version.ref = "sqldelight" }
+paging-common = { module = "androidx.paging:paging-common", version.ref = "paging" }
 paging-runtime = { module = "androidx.paging:paging-runtime", version.ref = "paging" }
 paging-compose = { module = "androidx.paging:paging-compose", version.ref = "paging" }
 core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "core-ktx" }
