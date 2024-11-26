@@ -57,10 +57,14 @@ class MainActivity : ComponentActivity() {
                     if (hasLoadedDatabase) {
                         val pagingSource = remember {
                             QueryPagingSource(
-                                countQuery = database.songQueries.count_songs(),
                                 transacter = database.songQueries,
                                 context = Dispatchers.IO,
-                                queryProvider = database.songQueries::get_paged_songs,
+                                pageBoundariesProvider = { anchor: String?, limit: Long ->
+                                    database.songQueries.keyed_page_boundaries_songs(limit, anchor)
+                                },
+                                queryProvider = { beginInclusive: String, endExclusive: String? ->
+                                    database.songQueries.get_keyed_paged_songs(beginInclusive, endExclusive)
+                                },
                             )
                         }
                         val pager = remember {
@@ -75,7 +79,8 @@ class MainActivity : ComponentActivity() {
                                 item {
                                     Text(
                                         text = "Waiting for items to load from the backend",
-                                        modifier = Modifier.fillMaxWidth()
+                                        modifier = Modifier
+                                            .fillMaxWidth()
                                             .wrapContentWidth(Alignment.CenterHorizontally)
                                     )
                                 }
@@ -93,7 +98,8 @@ class MainActivity : ComponentActivity() {
                             if (lazyPagingItems.loadState.append == LoadState.Loading) {
                                 item {
                                     CircularProgressIndicator(
-                                        modifier = Modifier.fillMaxWidth()
+                                        modifier = Modifier
+                                            .fillMaxWidth()
                                             .wrapContentWidth(Alignment.CenterHorizontally)
                                     )
                                 }

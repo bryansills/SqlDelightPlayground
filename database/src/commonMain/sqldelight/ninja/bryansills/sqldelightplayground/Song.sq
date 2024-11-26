@@ -44,6 +44,27 @@ FROM song
 ORDER BY played_at DESC
 LIMIT :limit OFFSET :offset;
 
+get_keyed_paged_songs:
+SELECT *
+FROM song
+WHERE played_at >= :beginInclusive AND (played_at < :endExclusive OR :endExclusive IS NULL)
+ORDER BY played_at DESC;
+
+keyed_page_boundaries_songs:
+SELECT played_at
+FROM (
+  SELECT
+    played_at,
+    CASE
+      WHEN ((row_number() OVER(ORDER BY played_at DESC) - 1) % :limit) = 0 THEN 1
+      WHEN :anchor IS NOT NULL AND played_at = :anchor THEN 1
+      ELSE 0
+    END page_boundary
+  FROM song
+  ORDER BY played_at DESC
+)
+WHERE page_boundary = 1;
+
 get_all_songs_with_album_name:
 SELECT song.name, album.name AS albumName
 FROM song
