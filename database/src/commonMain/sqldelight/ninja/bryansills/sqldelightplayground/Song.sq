@@ -65,6 +65,13 @@ FROM (
 )
 WHERE page_boundary = 1;
 
+get_keyed_paged_songs_with_album_name:
+SELECT song.name, song.played_at, album.name AS albumName
+FROM song
+INNER JOIN album ON album.external_id = song.external_album_id
+WHERE played_at >= :beginInclusive AND (played_at < :endExclusive OR :endExclusive IS NULL)
+ORDER BY played_at DESC;
+
 get_all_songs_with_album_name:
 SELECT song.name, album.name AS albumName
 FROM song

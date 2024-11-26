@@ -63,7 +63,7 @@ class MainActivity : ComponentActivity() {
                                     database.songQueries.keyed_page_boundaries_songs(limit, anchor)
                                 },
                                 queryProvider = { beginInclusive: String, endExclusive: String? ->
-                                    database.songQueries.get_keyed_paged_songs(beginInclusive, endExclusive)
+                                    database.songQueries.get_keyed_paged_songs_with_album_name(beginInclusive, endExclusive)
                                 },
                             )
                         }
@@ -91,6 +91,7 @@ class MainActivity : ComponentActivity() {
 
                                 Column(modifier = Modifier.padding(4.dp)) {
                                     Text(text = "Title: ${song.name}")
+                                    Text(text = "Album Title: ${song.albumName}")
                                     Text(text = "Played at: ${song.played_at}")
                                 }
                             }
